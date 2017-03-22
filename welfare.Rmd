@@ -1,0 +1,71 @@
+---
+title: "Quizes"
+output: 
+  pdf_document: 
+    keep_tex: yes
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Welfare Analysis
+
+Conduct welfare analysis using the setting below. In other words, culculate the equilibrium price and the area　between the price and the demand curb.
+
+Hint; use `unitroot()`, `integrate()` and `plot()` (option). 
+
+Price:$P$
+
+Goods:$D$,$S$
+
+Demand Curb:$P=90-D$ or $D=90-P$
+
+Supply Curb:$P=2S$ or $S=\frac{1}{2}P$
+
+# Sample Answer
+
+
+Firstly, we need to get the equilibrium. To solve this foumula, it is common to define functions.
+
+```{r eval=FALSE, error=FALSE}
+demand_c<-function(x){
+  return(90-x)
+}
+
+supply_c<-function(x){
+  return(2x)
+}
+
+solver<-function(p){
+  return(supply_c(x)-demand_c(x))
+}
+
+```
+
+The last funtion `solver` is for solving the equilibrium. Culucluating the equilibrium quantitiy means solve
+
+
+$$
+90-D-2S=0 \\
+D=S
+$$
+`R` provides a function to solve equation as other popular languages do. In this sample anwer, we use `uniroot()`. 
+
+
+```{r eval=FALSE, error=FALSE}
+equil <- uniroot(solver, c(0, 90))
+```
+
+
+The second argument the range in which a solution exist. As you might assume, it is sometime difficult for use to set the range. However, we can use besic economics knowledge. As seeing the demand and supply curb, you can easily find the range of quantitiy is from 0 to 90. So, we can set the range `c(0,90)`. `quil$root` enable you to get the equilibriu price.
+
+Next, we will culculate the area between the demand curb and price line. `integratuion()` provides us the method to get the area.  
+
+
+```{r eval=FALSE, error=FALSE}
+equil_price <- demand_c(equil$root)
+area <- integrate(demand_c,0,equil$root)
+consumer_welfare <- area$value - equil_price * equil$root
+```
